@@ -1,0 +1,13 @@
+---
+services:
+  dypagt:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    secrets:
+      - .secrets.json
+
+secrets:
+  .secrets.json:
+    file: .secrets.json
