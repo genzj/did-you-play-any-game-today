@@ -28,7 +28,6 @@ ARG PYTHON_SHORT_VERSION=3.11
 # Keeps Python from buffering stdout and stderr to avoid situations where
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
-WORKDIR /${PROJECT}
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
@@ -44,6 +43,7 @@ RUN adduser \
 
 # Switch to the non-privileged user to run the application.
 USER appuser
+WORKDIR /${PROJECT}
 
 # retrieve packages from build stage
 ENV PYTHONPATH=/${PROJECT}/pkgs
@@ -54,4 +54,4 @@ COPY --from=builder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/bin/* /bi
 
 # set command/entrypoint, adapt to fit your needs
 # CMD ["python", "-m", "did_you_play_any_game_today"]
-CMD ["uvicorn", "did_you_play_any_game_today.server.main:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "did_you_play_any_game_today.server.main:app"]
