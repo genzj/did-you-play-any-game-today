@@ -1,11 +1,11 @@
 import json
-import typing
+from pydantic import BaseModel
 
 from .auth import auth
 from .type import ResponseData
 
 
-class MeResponse(typing.TypedDict):
+class MeResponse(BaseModel):
     created_at: str
     id: str
     name: str
@@ -40,4 +40,4 @@ def me() -> ResponseData[MeResponse]:
         # Saving the response as JSON
         json_response = response.json()
         print(json.dumps(json_response, indent=4, sort_keys=True))
-    return json_response
+    return ResponseData(**json_response)

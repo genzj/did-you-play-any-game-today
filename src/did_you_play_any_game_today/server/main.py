@@ -1,12 +1,15 @@
-from schedule import every, repeat, run_pending
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
+from schedule import every, repeat, run_pending
 
 from ..config import settings
-from .routers import game
-
+from ..twitter import send_text_tweet
+from .routers import admin, game
 
 app = FastAPI()
+app.include_router(admin.router)
 app.include_router(game.router)
 
 
@@ -21,5 +24,15 @@ def scheduled_tasks() -> None:
     settings.get('tweet_at_timezone', 'America/Vancouver')
 ))
 def tweet():
-    # Run tweet sending process
-    pass
+    state = Path(
+        settings.get('state_file_path', '.state.json')
+    )
+    if state.is_file():
+        send_text_tweet(
+            settings.get('positive_tweet', '🎊 Yes! 🎉')
+        )
+        state.unlink()
+    else:
+        send_text_tweet(
+            settings.get('negative_tweet', 'No...🥲')
+        )

@@ -37,4 +37,4 @@ def send_text_tweet(text: str) -> ResponseData[SendTextTweetResponse]:
         # Saving the response as JSON
         json_response = response.json()
         print(json.dumps(json_response, indent=4, sort_keys=True))
-    return json_response
+    return ResponseData(**json_response)
