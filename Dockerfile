@@ -53,4 +53,5 @@ COPY --from=builder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/lib /${PR
 COPY --from=builder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/bin/* /bin/
 
 # set command/entrypoint, adapt to fit your needs
-CMD ["python", "-m", "did_you_play_any_game_today"]
+# CMD ["python", "-m", "did_you_play_any_game_today"]
+CMD ["uvicorn", "did_you_play_any_game_today.server.main:app"]

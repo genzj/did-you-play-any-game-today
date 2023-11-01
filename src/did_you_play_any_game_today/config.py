@@ -12,6 +12,8 @@ class Settings(collections.abc.Mapping):
     positive_tweet: typing.Optional[str]
     negative_tweet: typing.Optional[str]
     state_file_path: typing.Optional[str]
+    tweet_at: typing.Optional[str]
+    tweet_at_timezone: typing.Optional[str]
 
 
 settings = typing.cast(Settings, Dynaconf(
