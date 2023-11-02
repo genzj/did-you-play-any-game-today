@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi_utils.tasks import repeat_every
 from schedule import every, repeat, run_pending
 
@@ -9,8 +10,9 @@ from ..twitter import send_text_tweet
 from .routers import admin, game
 
 app = FastAPI()
-app.include_router(admin.router)
-app.include_router(game.router)
+app.include_router(admin.router, prefix='/api')
+app.include_router(game.router, prefix='/api')
+app.mount("/ui", StaticFiles(directory="static"), name="ui")
 
 
 @app.on_event('startup')
