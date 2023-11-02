@@ -1,10 +1,19 @@
 # syntax=docker/dockerfile:1
-
-# https://pdm.fming.dev/latest/usage/advanced/#use-pdm-in-a-multi-stage-dockerfile
-
 ARG PYTHON_VERSION=3.11.6
 
-FROM python:${PYTHON_VERSION} as builder
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY ./ui/did-you-play-any-game-today/ /app
+WORKDIR /app
+
+FROM base AS uibuild
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
+
+# https://pdm.fming.dev/latest/usage/advanced/#use-pdm-in-a-multi-stage-dockerfile
+FROM python:${PYTHON_VERSION} as apibuilder
 ARG PROJECT=did_you_play_any_game_today
 
 # install PDM
@@ -45,12 +54,15 @@ RUN adduser \
 USER appuser
 WORKDIR /${PROJECT}
 
+# retrieve UI files
+COPY --from=uibuild /app/dist static
+
 # retrieve packages from build stage
 ENV PYTHONPATH=/${PROJECT}/pkgs
-COPY --from=builder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/lib /${PROJECT}/pkgs
+COPY --from=apibuilder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/lib /${PROJECT}/pkgs
 
 # retrieve executables
-COPY --from=builder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/bin/* /bin/
+COPY --from=apibuilder /${PROJECT}/__pypackages__/${PYTHON_SHORT_VERSION}/bin/* /bin/
 
 # set command/entrypoint, adapt to fit your needs
 # CMD ["python", "-m", "did_you_play_any_game_today"]

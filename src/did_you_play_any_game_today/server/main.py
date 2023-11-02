@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi_utils.tasks import repeat_every
 from schedule import every, repeat, run_pending
@@ -12,7 +13,13 @@ from .routers import admin, game
 app = FastAPI()
 app.include_router(admin.router, prefix='/api')
 app.include_router(game.router, prefix='/api')
-app.mount("/ui", StaticFiles(directory="static"), name="ui")
+
+
+@app.get("/")
+async def redirect_to_ui():
+    return RedirectResponse(url="/index.html")
+
+app.mount("/", StaticFiles(directory="static"), name="ui")
 
 
 @app.on_event('startup')
