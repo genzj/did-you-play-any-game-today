@@ -29,19 +29,13 @@ def scheduled_tasks() -> None:
 
 
 @repeat(every().day.at(
-    settings.get('tweet_at', '04:44'),
-    settings.get('tweet_at_timezone', 'America/Vancouver')
+    settings.tweet_at,
+    settings.tweet_at_timezone,
 ))
 def tweet():
-    state = Path(
-        settings.get('state_file_path', '.state.json')
-    )
+    state = Path(settings.state_file_path)
     if state.is_file():
-        send_text_tweet(
-            settings.get('positive_tweet', '🎊 Yes! 🎉')
-        )
+        send_text_tweet(settings.positive_tweet)
         state.unlink()
     else:
-        send_text_tweet(
-            settings.get('negative_tweet', 'No...🥲')
-        )
+        send_text_tweet(settings.negative_tweet)

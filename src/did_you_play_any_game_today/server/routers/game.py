@@ -24,10 +24,7 @@ class GamePlay(BaseModel):
 @router.post('/play')
 async def record_play() -> GamePlay:
     play = GamePlay(played=True)
-    with open(
-        settings.get('state_file_path', '.state.json'),
-        'w'
-    ) as state:
+    with open(settings.state_file_path, 'w') as state:
         state.write(play.json())
     return play
 
@@ -35,7 +32,7 @@ async def record_play() -> GamePlay:
 @router.get('/play')
 async def list_play() -> GamePlay:
     try:
-        state = settings.get('state_file_path', '.state.json')
+        state = settings.state_file_path
         play = GamePlay.parse_file(state)
     except Exception:
         play = GamePlay(timestamp=0)
