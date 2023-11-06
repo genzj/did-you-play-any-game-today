@@ -23,10 +23,30 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+tests = ["tests", "*/tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["did_you_play_any_game_today", "tests"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
+
 [tool.pdm.dev-dependencies]
 dev = [
     "types-requests>=2.31.0.10",
     "types-requests-oauthlib>=1.3.0.1",
-    "httpx>=0.25.1",
+    "nox>=2023.4.22",
+]
+lint = [
+    "bandit>=1.7.5",
+    "safety>=2.3.5",
+]
+test = [
+    "coverage[toml]>=7.3.2",
     "pytest>=7.4.3",
+    "httpx>=0.25.1",
 ]
