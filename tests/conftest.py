@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from did_you_play_any_game_today.config import settings
+from did_you_play_any_game_today.config import settings, Settings
 
 
 @pytest.fixture(scope='session')
@@ -28,7 +28,7 @@ def config_file(tmp_path_factory, state_file) -> Path:
 
 
 @pytest.fixture(autouse=True, scope='session')
-def load_test_settings(config_file: Path):
+def load_test_settings(config_file: Path) -> Settings:
     # configure() only set default values, so it cannot override the
     # settings_files as it's been set by the settings' definition
     # using include to override the configs.
@@ -44,6 +44,7 @@ def load_test_settings(config_file: Path):
     assert settings.tweet_at == '12:34'
     assert settings.tweet_at_timezone == 'UTC'
     assert settings.state_file_path.endswith('/state.json')
+    return settings
 
 
 @pytest.fixture
