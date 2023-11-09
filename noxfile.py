@@ -9,7 +9,7 @@ os.environ.update({
     "PDM_NO_LOCK": "1",
 })
 
-python_versions = ['3.11']
+python_versions = ['3.11', '3.10', '3.12']
 main_python_version = python_versions[0]
 
 
