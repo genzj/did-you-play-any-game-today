@@ -93,14 +93,16 @@ jobs:
 
       - name: Combine coverage data and display human readable report
         run: |
-          nox --session=coverage
+          nox --session=coverage \
+            --python=${{ steps.setup-pdm.outputs.python-version }}
 
       - name: Create coverage report
         run: |
-          nox --session=coverage -- xml
+          nox --session=coverage \
+            --python=${{ steps.setup-pdm.outputs.python-version }} \
+            -- xml
 
       - name: Upload coverage report
-        if: ${{ !github.event.act }}  # skip during local actions testing
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
