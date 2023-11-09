@@ -10,6 +10,7 @@ os.environ.update({
 })
 
 python_versions = ['3.11']
+main_python_version = python_versions[0]
 
 
 @session(python=python_versions)
@@ -30,7 +31,7 @@ def test(session: Session):
             session.notify('coverage', posargs=[])
 
 
-@session
+@session(python=python_versions)
 def coverage(session: Session) -> None:
     """Produce the coverage report."""
     args = session.posargs or ["report"]
@@ -42,7 +43,7 @@ def coverage(session: Session) -> None:
     session.run("coverage", *args)
 
 
-@session
+@session(python=main_python_version)
 def safety(session: Session):
     """Scan dependencies for insecure packages."""
     session.run_always('pdm', 'install', '-G', 'lint', external=True)
@@ -62,7 +63,7 @@ def safety(session: Session):
         )
 
 
-@session
+@session(python=main_python_version)
 def bandit(session: Session):
     """Scan security issues"""
     session.run_always('pdm', 'install', '-G', 'lint', external=True)
