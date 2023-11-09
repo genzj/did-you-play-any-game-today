@@ -16,7 +16,9 @@ jobs:
           - {python: '3.11', os: 'ubuntu-latest', session: 'safety'}
           - {python: '3.11', os: 'ubuntu-latest', session: 'bandit'}
           - {python: '3.11', os: 'ubuntu-latest', session: 'test'}
-          - {python: '3.10', os: 'ubuntu-latest', session: 'test'}
+          # 3.10 not working with github env, need deep dive
+          #   [VirtualenvCreateError]: Can't resolve python interpreter
+          # - {python: '3.10', os: 'ubuntu-latest', session: 'test'}
           - {python: '3.12', os: 'ubuntu-latest', session: 'test'}
           # - {python: '3.11', os: 'windows-latest', session: 'test'}
           # - {python: '3.11', os: 'macos-latest', session: 'test'}
