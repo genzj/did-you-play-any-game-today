@@ -94,12 +94,12 @@ jobs:
       - name: Combine coverage data and display human readable report
         run: |
           nox --session=coverage \
-            --python=${{ steps.setup-pdm.outputs.python-version }}
+            --python=3.11
 
       - name: Create coverage report
         run: |
           nox --session=coverage \
-            --python=${{ steps.setup-pdm.outputs.python-version }} \
+            --python=3.11 \
             -- xml
 
       - name: Upload coverage report
