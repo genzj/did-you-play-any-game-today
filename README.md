@@ -1,5 +1,8 @@
 # did-you-play-any-game-today
 
+[![codecov](https://codecov.io/gh/genzj/did-you-play-any-game-today/graph/badge.svg?token=YS8OADFJSM)](https://codecov.io/gh/genzj/did-you-play-any-game-today)
+![Tests](https://github.com/genzj/did-you-play-any-game-today/actions/workflows/tests.yml/badge.svg)
+
 ## Development
 
 ### Backend
