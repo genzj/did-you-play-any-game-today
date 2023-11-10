@@ -1,11 +1,13 @@
 import json
 import tomllib
 from pathlib import Path
+from typing import Callable
 
 import pytest
 from fastapi.testclient import TestClient
+from requests import Request
 
-from did_you_play_any_game_today.config import settings, Settings
+from did_you_play_any_game_today.config import Settings, settings
 
 
 @pytest.fixture(scope='session')
@@ -53,3 +55,28 @@ def client():
     # because we need the test settings to be loaded before importing the app
     from did_you_play_any_game_today.server.main import app
     return TestClient(app)
+
+
+OAuthAsserter = Callable[[Request], None]
+
+
+def assert_has_oauth(request: Request):
+    headers = request.headers
+    assert 'Authorization' in headers
+    assert headers['Authorization'].startswith(b'OAuth ')
+    auth = dict()
+    for sec in headers['Authorization'].decode('utf-8').lstrip('OAuth ').split(', '):
+        k, v = sec.split('=', 1)
+        auth[k] = v
+    assert 'oauth_nonce' in auth
+    assert 'oauth_timestamp' in auth
+    assert 'oauth_signature' in auth
+    assert auth['oauth_version'] == '"1.0"'
+    assert auth['oauth_signature_method'] == '"HMAC-SHA1"'
+    assert auth['oauth_consumer_key'] == '"fake_consumer_key"'
+    assert auth['oauth_token'] == '"fake_access_token"'
+
+
+@pytest.fixture(scope='session')
+def oauth_asserter() -> OAuthAsserter:
+    return assert_has_oauth
