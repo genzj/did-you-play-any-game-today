@@ -1,6 +1,6 @@
 [project]
 name = "did-you-play-any-game-today"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Twitter bot sending out tweets indicating if you played game today."
 authors = [
     {name = "genzj", email = "zj0512@gmail.com"},
