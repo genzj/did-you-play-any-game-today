@@ -54,7 +54,9 @@ def client():
     # this import must stay here instead of in the module scope
     # because we need the test settings to be loaded before importing the app
     from did_you_play_any_game_today.server.main import app
-    return TestClient(app)
+    client = TestClient(app)
+    client.follow_redirects = False
+    return client
 
 
 OAuthAsserter = Callable[[Request], None]
