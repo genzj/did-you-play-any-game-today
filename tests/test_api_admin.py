@@ -1,4 +1,5 @@
 from pathlib import Path
+import pytest
 
 from fastapi.testclient import TestClient
 from requests_mock import Mocker
@@ -35,6 +36,26 @@ def test_me(client: TestClient, requests_mock: Mocker, oauth_asserter):
     assert me['name'] == 'fake user'
 
 
+def test_me_exception(
+    client: TestClient,
+    requests_mock: Mocker,
+    oauth_asserter
+):
+    requests_mock.get(
+        'https://api.twitter.com/2/users/me',
+        status_code=403,
+        text='Unauthorized',
+    )
+    with pytest.raises(
+        Exception,
+        match=r'Request returned an error: 403 Unauthorized'
+    ):
+        client.get('/api/admin/me')
+    request = requests_mock.request_history[0]
+    oauth_asserter(request)
+    assert request.qs == {'user.fields': ['created_at,profile_image_url']}
+
+
 def test_flush_without_state(
     client: TestClient,
     requests_mock: Mocker,
@@ -61,6 +82,28 @@ def test_flush_without_state(
     assert response.status_code == 200
     flush = response.json()
     assert len(flush['tasks']) > 0
+
+
+def test_flush_with_state_exception(
+    client: TestClient,
+    requests_mock: Mocker,
+    oauth_asserter,
+    state_file: Path
+):
+    state_file.unlink(missing_ok=True)
+    requests_mock.post(
+        'https://api.twitter.com/2/tweets',
+        status_code=403,
+        text='Unauthorized',
+    )
+    with pytest.raises(
+        Exception,
+        match=r'Request returned an error: 403 Unauthorized'
+    ):
+        client.post('/api/admin/flush')
+    request = requests_mock.request_history[0]
+    oauth_asserter(request)
+    assert request.json() == {'text': 'no'}
 
 
 def test_flush_with_state(
